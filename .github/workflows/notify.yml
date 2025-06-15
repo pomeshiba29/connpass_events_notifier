@@ -29,4 +29,4 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         COMPASS_API_KEY: ${{ secrets.COMPASS_API_KEY }}
       run: |
-        python scoring.py
+        python main.py
