@@ -10,13 +10,13 @@ load_dotenv()
 
 SEARCH_KEYWORDS = ["生成AI", "LLM", "MCP", "RAG"]
 SEARCH_AREA = "Tokyo"
-COUNT = 10
+COUNT = 5
 
 #descriptionのHTMLタグをカットする関数
 def strip_html_tags(html):
     return BeautifulSoup(html or "", "html.parser").get_text()
 
-#connpassAPIでデータを取得する（キーワード：生成AI・LLM・MCP・RAG、地域：東京、上限：10個）
+#connpassAPIでデータを取得する（キーワード：生成AI・LLM・MCP・RAG、地域：東京、上限：5個）
 def fetch_compass_events_v2(keyword=SEARCH_KEYWORDS, area=SEARCH_AREA, count=COUNT):
     all_events = []
 
