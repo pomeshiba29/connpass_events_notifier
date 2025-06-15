@@ -1,0 +1,11 @@
+# 仮想環境（例: venvtest フォルダ）
+venvf/
+
+# OpenAI APIキーなど秘密情報
+.env
+
+# Pythonのキャッシュ
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
