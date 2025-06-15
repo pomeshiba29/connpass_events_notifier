@@ -8,16 +8,16 @@ import time
 # .envからAPIキーを読み込む
 load_dotenv()
 
-SEARCH_KEYWORDS = ["生成AI", "LLM", "ChatGPT", "LangChain"]
+SEARCH_KEYWORDS = ["生成AI", "LLM", "MCP", "RAG"]
 SEARCH_AREA = "Tokyo"
-MAX_PER_KEYWORD = 5
+COUNT = 10
 
 #descriptionのHTMLタグをカットする関数
 def strip_html_tags(html):
     return BeautifulSoup(html or "", "html.parser").get_text()
 
-#connpassAPIでデータを取得する（キーワード：生成AI、地域：東京、上限：10個）
-def fetch_compass_events_v2(keyword=SEARCH_KEYWORDS, area=SEARCH_AREA, count=MAX_PER_KEYWORD):
+#connpassAPIでデータを取得する（キーワード：生成AI・LLM・MCP・RAG、地域：東京、上限：10個）
+def fetch_compass_events_v2(keyword=SEARCH_KEYWORDS, area=SEARCH_AREA, count=COUNT):
     all_events = []
 
     base_url = "https://connpass.com/api/v2/events/"
