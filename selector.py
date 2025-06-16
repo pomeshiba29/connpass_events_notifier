@@ -2,10 +2,8 @@ import re
 
 # --- 平均スコアを抽出 ---
 def extract_average_score(text):
-    match = re.search(r"平均スコア[:：] ?([0-9.]+)", text)
+    match = re.search(r"(?:平均スコア|評価スコア|スコア)[^\d]*([0-9]+(?:\.[0-9]+)?)", text)
     return float(match.group(1)) if match else 0.0
-
-#アナウンスする日付
 
 # --- 上位3イベントをテキスト整形 ---
 def format_top_events(scored_events):
