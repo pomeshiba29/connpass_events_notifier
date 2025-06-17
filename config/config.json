@@ -1,0 +1,22 @@
+{
+  "search": {
+    "keywords": ["生成AI", "LLM", "MCP", "Claude", "GPT", "RAG", "Gemini"],
+    "count": 10,
+    "online_only": true,
+    "exclude_titles": ["もくもく会", "MokuMoku会"]
+  },
+  "scoring": {
+    "criteria": [
+      "①生成AIの実務的な開発スキルが高められるか",
+      "②対象者のレベルが中級以上か",
+      "③ハンズオン（実践演習）があるか",
+      "④登壇者の信頼性（専門性・実績）"
+    ],
+    "summary_limit": "【概要】概要を3行以内で要約してください。",
+    "score_format": "【平均スコア】平均スコアを以下の形式で明示してください：\n4.25点",
+    "model": "gpt-3.5-turbo",
+    "temperature": 0.3,
+    "max_tokens": 900,
+    "system_role": "あなたは生成AIイベントの評価専門家です。"
+  }
+}

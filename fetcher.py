@@ -1,48 +1,61 @@
 import httpx
 import os
+import json
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 from dateutil.parser import isoparse
 import time
 
-# .envからAPIキーを読み込む
+# --- .envの読み込み（ローカル実行時用） ---
 load_dotenv()
+CONNPASS_API_KEY = os.getenv("CONNPASS_API_KEY")
 
-SEARCH_KEYWORDS = ["生成AI","LLM","MCP","Claude","GPT","RAG","Gemini"]
-COUNT = 10  # 最終出力件数
+# --- 設定ファイル（検索条件など）読み込み ---
+def load_config(path="config/config.json"):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-# descriptionのHTMLタグをカットする関数
+config = load_config()
+search_config = config.get("search", {})
+
+SEARCH_KEYWORDS = search_config.get("keywords", [])
+COUNT = search_config.get("count", 10)
+EXCLUDE_TITLES = [kw.lower() for kw in search_config.get("exclude_titles", [])]
+
+# --- HTMLタグ除去 ---
 def strip_html_tags(html):
     return BeautifulSoup(html or "", "html.parser").get_text()
 
-# 開催地が「オンライン」のみ許可
+# --- オンライン開催かどうかの判定 ---
 def is_online_event(place: str) -> bool:
     return place and any(word in place.lower() for word in [
         "オンライン", "zoom", "google meet", "teams", "youtube", "webinar", "youtube live"
     ])
 
-# タイトルに「もくもく会」が含まれていないことを確認
-def is_not_mokumoku(title: str) -> bool:
+# --- タイトルが除外対象でないかの判定 ---
+def is_not_excluded(title: str) -> bool:
     lower_title = title.lower()
-    return "もくもく会" not in lower_title and "mokumoku会" not in lower_title
+    return not any(exclude in lower_title for exclude in EXCLUDE_TITLES)
 
-
-# connpass APIからオンライン開催の未来イベントを取得
+# --- connpass APIからイベント取得 ---
 def fetch_online_events():
+    if not CONNPASS_API_KEY:
+        raise ValueError("❌ CONNPASS_API_KEY が設定されていません。")
+
     base_url = "https://connpass.com/api/v2/events/"
     now = datetime.now(timezone(timedelta(hours=9)))
     week_later = (now + timedelta(days=7)).isoformat()
     all_events = {}
 
     headers = {
-        "X-API-Key": os.getenv("COMPASS_API_KEY")
+        "X-API-Key": CONNPASS_API_KEY
     }
 
     for keyword in SEARCH_KEYWORDS:
         params = {
             "keyword": keyword,
-            "count": COUNT ,
+            "count": COUNT,
             "startedAfter": now.isoformat(),
             "startedBefore": week_later,
             "order": "new"
@@ -59,7 +72,6 @@ def fetch_online_events():
             continue
 
         events = response.json().get("events", [])
-
         for event in events:
             event_start = isoparse(event.get("started_at"))
             place = event.get("place") or ""
@@ -67,8 +79,8 @@ def fetch_online_events():
 
             if (
                 event_start > now
-                and is_online_event(place)
-                and is_not_mokumoku(title)
+                and (not search_config.get("online_only") or is_online_event(place))
+                and is_not_excluded(title)
             ):
                 event_id = event.get("id")
                 if event_id not in all_events:
@@ -87,7 +99,7 @@ def fetch_online_events():
 
     return list(all_events.values())
 
-# 出力確認
+# --- 出力確認 ---
 if __name__ == "__main__":
     events = fetch_online_events()
     for e in events:
