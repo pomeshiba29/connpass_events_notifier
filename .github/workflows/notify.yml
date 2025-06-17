@@ -27,6 +27,6 @@ jobs:
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        COMPASS_API_KEY: ${{ secrets.COMPASS_API_KEY }}
+        CONNPASS_API_KEY: ${{ secrets.CONNPASS_API_KEY }}
       run: |
         python main.py
